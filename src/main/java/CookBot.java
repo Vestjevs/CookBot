@@ -5,11 +5,16 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.generics.BotOptions;
 import org.telegram.telegrambots.meta.generics.LongPollingBot;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -49,6 +54,71 @@ public class CookBot extends TelegramLongPollingBot {
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
+
+            } else if (mess_text.equals("/markup")) {
+                SendMessage message = new SendMessage()
+                        .setChatId(chatId)
+                        .setText("Here is your markup");
+
+                ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+                List<KeyboardRow> keyboard = new ArrayList<>();
+
+                KeyboardRow row = new KeyboardRow();
+
+                row.add("Button 1");
+                row.add("Button 2");
+                row.add("Button 3");
+
+                keyboard.add(row);
+
+                row = new KeyboardRow();
+
+                row.add("Button 4");
+                row.add("Button 5");
+                row.add("Button 6");
+
+                keyboard.add(row);
+
+                keyboardMarkup.setKeyboard(keyboard);
+
+                message.setReplyMarkup(keyboardMarkup);
+
+
+                try {
+                    execute(message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+
+            } else if (mess_text.equals("Button 1")) {
+
+                SendPhoto message = new SendPhoto()
+                        .setChatId(chatId)
+                        .setPhoto("AgADAgADuasxG0afwUso6iQXKxYuP6DUuQ8ABAEAAwIAA3kAA-gQAgABFgQ")
+                        .setCaption("Photo");
+
+                try {
+                    execute(message);
+
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+
+            } else if (mess_text.equals("/hide")) {
+                SendMessage message = new SendMessage()
+                        .setChatId(chatId)
+                        .setText("Keyboard hidden");
+
+                ReplyKeyboardRemove keyboardMarkup = new ReplyKeyboardRemove();
+
+                message.setReplyMarkup(keyboardMarkup);
+
+                try {
+                    execute(message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+
 
             } else {
                 //Unknown command
