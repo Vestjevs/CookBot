@@ -1,12 +1,17 @@
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.generics.BotOptions;
 import org.telegram.telegrambots.meta.generics.LongPollingBot;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class CookBot extends TelegramLongPollingBot {
 
@@ -15,21 +20,86 @@ public class CookBot extends TelegramLongPollingBot {
 
 
     public void onUpdateReceived(Update update) {
+
+
         if (update.hasMessage() && update.getMessage().hasText()) {
-            String mess = update.getMessage().getText();
-
+            String mess_text = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
-            SendMessage message = new SendMessage()
-                    .setChatId(chatId).setText("Hello World");
 
-            try {
-                execute(message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
+
+            if (mess_text.equals("/start")) {
+                SendMessage message = new SendMessage()
+                        .setChatId(chatId).setText("Сейчас я покажу тебе все прелести анального секаса!!");
+
+                try {
+                    execute(message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+
+                }
+            } else if (mess_text.equals("/pic")) {
+                //First send to telegram server and know their link
+
+                SendPhoto msg = new SendPhoto()
+                        .setChatId(chatId)
+                        .setPhoto("AgADAgADB6sxG9PPAAFIlOrJSnHCzEe75LkPAAQBAAMCAAN5AAM5SwIAARYE")
+                        .setCaption("Photo");
+                try {
+                    execute(msg); // Call method to send the photo
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                //Unknown command
+
+                SendMessage message = new SendMessage()
+                        .setChatId(chatId)
+                        .setText("Unknown command");
+
+                try {
+                    execute(message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
 
             }
 
 
+        } else if (update.hasMessage() && update.getMessage().hasPhoto()) {
+            // Message contains photo
+            // Set variables
+            long chat_id = update.getMessage().getChatId();
+
+            // Array with photo objects with different sizes
+            // We will get the biggest photo from that array
+            List<PhotoSize> photos = update.getMessage().getPhoto();
+            // Know file_id
+            String f_id = photos.stream()
+                    .sorted(Comparator.comparing(PhotoSize::getFileSize).reversed())
+                    .findFirst()
+                    .orElse(null).getFileId();
+            // Know photo width
+            int f_width = photos.stream()
+                    .sorted(Comparator.comparing(PhotoSize::getFileSize).reversed())
+                    .findFirst()
+                    .orElse(null).getWidth();
+            // Know photo height
+            int f_height = photos.stream()
+                    .sorted(Comparator.comparing(PhotoSize::getFileSize).reversed())
+                    .findFirst()
+                    .orElse(null).getHeight();
+            // Set photo caption
+            String caption = "file_id: " + f_id + "\nwidth: " + Integer.toString(f_width) + "\nheight: " + Integer.toString(f_height);
+            SendPhoto msg = new SendPhoto()
+                    .setChatId(chat_id)
+                    .setPhoto(f_id)
+                    .setCaption(caption);
+            try {
+                execute(msg); // Call method to send the photo with caption
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
         }
     }
 
