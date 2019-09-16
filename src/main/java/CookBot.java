@@ -1,3 +1,4 @@
+import com.vdurmont.emoji.EmojiParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,27 +15,45 @@ import org.telegram.telegrambots.meta.generics.BotOptions;
 import org.telegram.telegrambots.meta.generics.LongPollingBot;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class CookBot extends TelegramLongPollingBot {
 
-    private static final String TOKEN = "989086914:AAHIJVcfmrbDHlzyX7UpXfaa3vLF0351JB0";
+    private static final String TOKEN = "989086914:AAEjUEo4v2qP1W2xNNl3RtlTk8pA3b093DY";
     private static final String USERNAME = "OurCookBot";
+    private List<String> list = new ArrayList<>();
 
 
     public void onUpdateReceived(Update update) {
-
-
         if (update.hasMessage() && update.getMessage().hasText()) {
             String mess_text = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
+            System.out.println(chatId);
 
+            // Logging joined user
+            String userFirstName = update.getMessage().getChat().getFirstName();
+            String userLastName = update.getMessage().getChat().getLastName();
+            String username = update.getMessage().getChat().getUserName();
+            long userId = update.getMessage().getChat().getId();
+            String joined = String.format("%s,%s,%s,%d", userFirstName, userLastName, username, userId);
+
+            this.log(joined);
+            //🐸🐸
+
+
+            //emoji 🐸🐸EmojiParser
 
             if (mess_text.equals("/start")) {
                 SendMessage message = new SendMessage()
-                        .setChatId(chatId).setText("Сейчас я покажу тебе все прелести анального секаса!!");
+                        .setChatId(chatId).setText(EmojiParser.parseToUnicode("Сейчас я покажу тебе все прелести анального секаса!!:smile:"));
 
                 try {
                     execute(message);
@@ -45,13 +64,13 @@ public class CookBot extends TelegramLongPollingBot {
             } else if (mess_text.equals("/pic")) {
                 //First send to telegram server and know their link
 
-                SendPhoto msg = new SendPhoto()
-                        .setChatId(chatId)
-                        .setPhoto("AgADAgADB6sxG9PPAAFIlOrJSnHCzEe75LkPAAQBAAMCAAN5AAM5SwIAARYE")
-                        .setCaption("Photo");
+
                 try {
-                    execute(msg); // Call method to send the photo
-                } catch (TelegramApiException e) {
+                    SendPhoto pic = new SendPhoto()
+                            .setChatId(chatId)
+                            .setPhoto("Random pic", new FileInputStream(new File("/root/Изображения/cat_sadness_bw_125241_1920x1080.jpg")));
+                    execute(pic); // Call method to send the photo
+                } catch (TelegramApiException | FileNotFoundException e) {
                     e.printStackTrace();
                 }
 
@@ -65,17 +84,17 @@ public class CookBot extends TelegramLongPollingBot {
 
                 KeyboardRow row = new KeyboardRow();
 
-                row.add("Button 1");
-                row.add("Button 2");
-                row.add("Button 3");
+                row.add("1");
+                row.add("2");
+                row.add("3");
 
                 keyboard.add(row);
 
                 row = new KeyboardRow();
 
-                row.add("Button 4");
-                row.add("Button 5");
-                row.add("Button 6");
+                row.add("4");
+                row.add("5");
+                row.add("6");
 
                 keyboard.add(row);
 
@@ -90,20 +109,31 @@ public class CookBot extends TelegramLongPollingBot {
                     e.printStackTrace();
                 }
 
-            } else if (mess_text.equals("Button 1")) {
+            } else if (mess_text.equals("1")) {
 
-                SendPhoto message = new SendPhoto()
+                SendPhoto photo = new SendPhoto()
                         .setChatId(chatId)
                         .setPhoto("AgADAgADuasxG0afwUso6iQXKxYuP6DUuQ8ABAEAAwIAA3kAA-gQAgABFgQ")
                         .setCaption("Photo");
 
                 try {
-                    execute(message);
+                    execute(photo);
 
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
 
+            } else if (mess_text.equals("2")) {
+                SendPhoto photo = new SendPhoto()
+                        .setChatId(chatId)
+                        .setPhoto("AgADAgADB6sxG9PPAAFIlOrJSnHCzEe75LkPAAQBAAMCAAN5AAM5SwIAARYE")
+                        .setCaption("Photo");
+
+                try {
+                    execute(photo);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
             } else if (mess_text.equals("/hide")) {
                 SendMessage message = new SendMessage()
                         .setChatId(chatId)
@@ -171,6 +201,13 @@ public class CookBot extends TelegramLongPollingBot {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void log(String joined) {
+        if (!list.contains(String.format("%s,%s", joined, new SimpleDateFormat().format(new Date())))) {
+            list.add(String.format("%s,%s", joined, new SimpleDateFormat().format(new Date())));
+        }
+        System.out.println(list);
     }
 
     public String getBotUsername() {
