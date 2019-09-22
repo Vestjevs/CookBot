@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class Menu {
     private JSONParser parser = new JSONParser();
-    private File resources = new File("/mnt/a04a4060-e572-41b7-bafe-bfad457696d5/Files/Repositories/CookBot/resources");
+    private File resources = new File("/mnt/a04a4060-e572-41b7-bafe-bfad457696d5/Files/Repositories/CookBot/resources/Recipes");
     private File[] menu = resources.listFiles();
 
     private Random random = new Random();

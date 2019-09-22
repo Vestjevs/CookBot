@@ -19,7 +19,7 @@ public class CookBot extends TelegramLongPollingBot {
     private static final String USERNAME = "OurCookBot";
     private List<String> list = new ArrayList<>();
 
-    private static final File dir = new File("/root/Загрузки/Wallpapers-Assorti17/");
+    private static final File dir = new File("//mnt/a04a4060-e572-41b7-bafe-bfad457696d5/Files/Repositories/CookBot/resources/Pics");
 
     private static final File[] files = dir.listFiles();
 
@@ -31,7 +31,6 @@ public class CookBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String mess_text = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
-            System.out.println(chatId);
 
             // Logging joined user
             String userFirstName = update.getMessage().getChat().getFirstName();
@@ -200,7 +199,7 @@ public class CookBot extends TelegramLongPollingBot {
 
                 SendMessage message = new SendMessage()
                         .setChatId(chatId)
-                        .setText("Please, insert");
+                        .setText("Please, insert command from list");
 
                 try {
                     execute(message);
