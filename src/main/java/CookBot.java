@@ -47,27 +47,11 @@ public class CookBot extends TelegramLongPollingBot {
             //emoji 🐸🐸EmojiParser
 
             if (mess_text.equals("/start")) {
-                SendMessage message = new SendMessage()
-                        .setChatId(chatId).setText(EmojiParser.parseToUnicode("Могу посоветовать в блюдах:smile:\nЧто бы ты хотел получить?"));
-
-                try {
-                    execute(message);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-
-                }
+                this.start(chatId);
             } else if (mess_text.equals("/pic")) {
                 //First send to telegram server and know their link
 
-
-                try {
-                    SendPhoto pic = new SendPhoto()
-                            .setChatId(chatId)
-                            .setPhoto("Random pic", new FileInputStream(files[random.nextInt(Objects.requireNonNull(files).length)]));
-                    execute(pic); // Call method to send the photo
-                } catch (TelegramApiException | FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+                this.sendRandomPic(chatId);
 
 
 //            } else if (mess_text.equals("/markup")) {
@@ -148,64 +132,25 @@ public class CookBot extends TelegramLongPollingBot {
 
             } else if (mess_text.equals("/first")) {
                 // send random first dish
-
-                SendMessage message = new SendMessage()
-                        .setChatId(chatId)
-                        .setText(botMenu.getFirstDish());
-                try {
-                    execute(message);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                this.sendFirstDish(chatId);
 
             } else if (mess_text.equals("/second")) {
                 // send random second dish
-
-                SendMessage message = new SendMessage()
-                        .setChatId(chatId)
-                        .setText(botMenu.getSecondDish());
-                try {
-                    execute(message);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                this.sendSecondDish(chatId);
 
             } else if (mess_text.equals("/salad")) {
                 // send random salad
 
-                SendMessage message = new SendMessage()
-                        .setChatId(chatId)
-                        .setText(botMenu.getSalad());
-                try {
-                    execute(message);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                this.sendSalad(chatId);
 
             } else if (mess_text.equals("/random")) {
                 // send random random dish
 
-                SendMessage message = new SendMessage()
-                        .setChatId(chatId)
-                        .setText(botMenu.getRandomDish());
-                try {
-                    execute(message);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                this.sendRandomDish(chatId);
 
             } else {
                 //Unknown command
-
-                SendMessage message = new SendMessage()
-                        .setChatId(chatId)
-                        .setText("Please, insert command from list");
-
-                try {
-                    execute(message);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                this.sendUsefulInfo(chatId);
 
             }
 
@@ -241,6 +186,51 @@ public class CookBot extends TelegramLongPollingBot {
         }
     }
 
+    private void sendUsefulInfo(Long chatId) {
+        SendMessage message = new SendMessage()
+                .setChatId(chatId)
+                .setText("Please, insert command from list");
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendRandomDish(Long chatId) {
+        SendMessage message = new SendMessage()
+                .setChatId(chatId)
+                .setText(botMenu.getRandomDish());
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendSalad(Long chatId) {
+        SendMessage message = new SendMessage()
+                .setChatId(chatId)
+                .setText(botMenu.getSalad());
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendSecondDish(Long chatId) {
+        SendMessage message = new SendMessage()
+                .setChatId(chatId)
+                .setText(botMenu.getSecondDish());
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void log(String joined) {
         if (!list.contains(String.format("%s,%s", joined, new SimpleDateFormat().format(new Date())))) {
             list.add(String.format("%s,%s", joined, new SimpleDateFormat().format(new Date())));
@@ -257,6 +247,41 @@ public class CookBot extends TelegramLongPollingBot {
     }
 
     public void clearWebhook() throws TelegramApiRequestException {
+
+    }
+
+    private void start(Long chatId) {
+        SendMessage message = new SendMessage()
+                .setChatId(chatId).setText(EmojiParser.parseToUnicode("Могу посоветовать о блюдах:smile:\nЧто бы ты хотел\\а получить?"));
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    private void sendRandomPic(Long chatId) {
+        try {
+            SendPhoto pic = new SendPhoto()
+                    .setChatId(chatId)
+                    .setPhoto("Random pic", new FileInputStream(files[random.nextInt(Objects.requireNonNull(files).length)]));
+            execute(pic); // Call method to send the photo
+        } catch (TelegramApiException | FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendFirstDish(Long chatId) {
+        SendMessage message = new SendMessage()
+                .setChatId(chatId)
+                .setText(botMenu.getFirstDish());
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
 
     }
 }
